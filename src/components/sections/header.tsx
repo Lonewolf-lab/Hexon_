@@ -25,10 +25,10 @@ function cn(...inputs: ClassValue[]) {
 }
 
 const navItems = [
-  { category: "L*3", name: "Chi Siamo", href: "/" },
-  { category: "Creating", name: "Progetti", href: "/progetti" },
-  { category: "Sharing", name: "Eventi", href: "/eventi" },
-  { category: "Innovation", name: "Ricerca", href: "/ricerca" },
+  { category: "About", name: "About Us", href: "/" },
+  { category: "Creating", name: "Projects", href: "/progetti" },
+  { category: "Sharing", name: "Events", href: "/eventi" },
+  { category: "Innovation", name: "Research", href: "/ricerca" },
 ];
 
 const NavLink = ({
@@ -63,13 +63,13 @@ const NavLink = ({
   return (
     <Link
       href={item.href}
-      className="group relative py-2 text-sm text-white no-underline"
+      className="group relative py-2 text-base text-white no-underline"
     >
       <div className="overflow-hidden">
-        <div className="text-secondary-text">{item.category}</div>
+        <div className="text-secondary-text text-sm">{item.category}</div>
       </div>
       <div className="overflow-hidden">
-        <div className="text-white">{item.name}</div>
+        <div className="text-white text-base">{item.name}</div>
       </div>
       <span
         className={cn(
@@ -86,17 +86,17 @@ export default function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 h-[65px] bg-[rgba(0,0,0,0.28)] backdrop-blur-sm text-primary-text font-body">
-      <div className="container mx-auto flex h-full items-center justify-between px-6">
+    <header className="fixed top-0 left-0 right-0 z-50 h-[85px] bg-[rgba(0,0,0,0.28)] backdrop-blur-sm text-primary-text font-body">
+      <div className="w-full flex h-full items-center justify-between px-6">
         <div className="flex flex-1 items-center justify-start">
           <Link
             href="/"
             className="flex h-full items-center text-white no-underline"
           >
-            <div className="flex h-[65px] w-[65px] items-center justify-center bg-accent-purple">
-              <Star className="h-8 w-8 text-white fill-white" />
+            <div className="flex h-[85px] w-[85px] items-center justify-center bg-accent-purple">
+              <Star className="h-10 w-10 text-white fill-white" />
             </div>
-            <span className="ml-4 hidden text-base leading-tight sm:block">
+            <span className="ml-4 hidden text-lg leading-tight sm:block">
               Lugano
               <br />
               Living Lab
@@ -120,7 +120,7 @@ export default function Header() {
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="flex items-center gap-x-1 py-1 px-2 text-sm text-white hover:bg-secondary-background hover:text-white"
+                  className="flex items-center gap-x-1 py-1 px-2 text-base text-white hover:bg-secondary-background hover:text-white"
                 >
                   IT
                   <ChevronDown className="h-4 w-4" />

@@ -1,87 +1,152 @@
 import Header from "@/components/sections/header";
 import Footer from "@/components/sections/footer";
+import { Search, ChevronDown } from "lucide-react";
 
 export default function Page() {
   return (
     <div className="min-h-screen bg-black text-white">
       <Header />
-      <main className="pt-[65px]">
-        {/* Hero */}
-        <section className="border-b border-border-gray">
-          <div className="container py-10 md:py-16">
-            <div className="text-sm text-secondary-text mb-6">/ Creating</div>
-            <h1 className="text-4xl md:text-6xl font-light">Progetti</h1>
-            <p className="max-w-3xl text-secondary-text text-body-large mt-6">
-              Una selezione dei progetti promossi da L*3 per esplorare, sperimentare
-              e diffondere pratiche di innovazione urbana, digitale e sociale.
-            </p>
+      <main className="pt-[270px]">
+        {/* Hero Section */}
+        <section className="bg-black">
+          <div className="w-full px-0 py-8">
+            <h1 className="text-[5rem] md:text-[10rem] font-thin text-white leading-none mb-0 pl-4">
+              Projects
+            </h1>
           </div>
         </section>
 
-        {/* Filters (static placeholders to match style) */}
-        <section className="border-b border-border-gray">
-          <div className="container py-6 flex flex-wrap items-center gap-3 text-sm text-secondary-text">
-            <span className="text-white/90">Filtri:</span>
-            <button className="px-3 py-1 bg-secondary-background hover:bg-[#222] transition-colors">Tutti</button>
-            <button className="px-3 py-1 bg-secondary-background hover:bg-[#222] transition-colors">Cittadinanza</button>
-            <button className="px-3 py-1 bg-secondary-background hover:bg-[#222] transition-colors">Dati e AI</button>
-            <button className="px-3 py-1 bg-secondary-background hover:bg-[#222] transition-colors">Territorio</button>
+        {/* Full-width Search Bar */}
+        <section className="bg-black border-t border-gray-800">
+          <div className="w-full px-2 py-4">
+            <div className="relative max-w-full">
+              <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400 w-6 h-6" />
+              <input
+                type="text"
+                placeholder="Search"
+                className="w-full bg-black border border-gray-700 px-16 py-5 text-lg text-white placeholder-gray-400 focus:outline-none focus:border-gray-500 rounded-lg"
+              />
+            </div>
           </div>
         </section>
 
-        {/* Projects grid (static demo content) */}
-        <section>
-          <div className="container py-12 md:py-16 grid gap-8 md:gap-10 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
-            {[
-              {
-                title: "Digital Lugano Map",
-                tag: "Dati e AI",
-                desc:
-                  "Una mappa interattiva per esplorare servizi, dati e iniziative digitali sul territorio.",
-              },
-              {
-                title: "Urban Living Pilot",
-                tag: "Territorio",
-                desc:
-                  "Sperimentazioni sullo spazio pubblico per migliorare vivibilità e partecipazione.",
-              },
-              {
-                title: "Civic Tech Toolkit",
-                tag: "Cittadinanza",
-                desc:
-                  "Strumenti open-source per facilitare il dialogo tra amministrazione e cittadini.",
-              },
-              {
-                title: "AI for Public Services",
-                tag: "Dati e AI",
-                desc:
-                  "Prototipi di utilizzo responsabile dell'AI per servizi più efficienti e inclusivi.",
-              },
-              {
-                title: "Data Commons Lugano",
-                tag: "Dati e AI",
-                desc:
-                  "Infrastrutture e pratiche per la condivisione sicura di dati tra partner pubblici e privati.",
-              },
-              {
-                title: "Green Mobility Lab",
-                tag: "Territorio",
-                desc:
-                  "Test di soluzioni per la mobilità sostenibile e la riduzione dell'impatto ambientale.",
-              },
-            ].map((p) => (
-              <article
-                key={p.title}
-                className="group border border-border-gray bg-secondary-background p-6 md:p-7 hover:bg-[#181818] transition-colors"
-              >
-                <div className="text-xs tracking-wide text-secondary-text uppercase">{p.tag}</div>
-                <h3 className="mt-2 text-2xl font-light">{p.title}</h3>
-                <p className="mt-3 text-secondary-text">{p.desc}</p>
-                <div className="mt-6 text-link underline-offset-4">
-                  <span className="text-link">Scopri di più</span>
+        {/* Strict Two-Column Layout Container */}
+        <section className="bg-black">
+          <div className="w-full px-2 pt-10 pb-24">
+            {/* CSS Grid Container for Horizontal Division */}
+            <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+              {/* Left Column - Filter Sidebar (1/4 = 25%) */}
+              <div className="lg:col-span-1">
+                <div className="relative">
+                  <select className="bg-gray-900 border border-gray-700 text-white px-4 py-3 pr-10 appearance-none focus:outline-none focus:border-gray-500 w-full">
+                    <option>Status</option>
+                    <option>In Progress</option>
+                    <option>Started</option>
+                    <option>Completed</option>
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
                 </div>
-              </article>
-            ))}
+              </div>
+
+              {/* Right Column - Project Content (3/4 = 75%) */}
+              <div className="lg:col-span-3">
+                <div className="space-y-8">
+                  {/* Project Grid */}
+                  <div className="space-y-8">
+                    {/* App MyLugano Project */}
+                    <article className="py-6 border-b border-gray-800 last:border-b-0">
+                      <div className="flex flex-col lg:flex-row lg:items-start gap-6">
+                        {/* Image Section */}
+                        <div className="lg:w-64 lg:flex-shrink-0">
+                          <div className="relative h-48 lg:h-40 bg-gradient-to-br from-gray-700 to-gray-900 rounded-lg overflow-hidden flex items-center justify-center">
+                            {/* Phone mockup */}
+                            <div className="relative">
+                              <div className="w-20 h-36 bg-white rounded-xl shadow-2xl transform rotate-12 relative overflow-hidden">
+                                <div className="absolute top-2 left-2 right-2 h-4 bg-red-500 rounded"></div>
+                                <div className="absolute top-8 left-2 right-2 h-2 bg-gray-200 rounded"></div>
+                                <div className="absolute top-12 left-2 right-2 h-2 bg-gray-200 rounded"></div>
+                                <div className="absolute bottom-4 left-2 right-2 h-6 bg-blue-500 rounded"></div>
+                              </div>
+                            </div>
+                            {/* Status badge overlay */}
+                            <div className="absolute top-3 left-3">
+                              <span className="border border-yellow-500 text-yellow-400 px-2 py-1 text-xs rounded bg-black/50">
+                                In Progress
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Content Section */}
+                        <div className="flex-1 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                          <div className="flex-1">
+                            {/* Title */}
+                            <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">
+                              App MyLugano
+                            </h3>
+                            
+                            {/* Description */}
+                            <p className="text-gray-400 text-base leading-relaxed">
+                              A digital ecosystem to get for joy the city and support the local economy.
+                            </p>
+                          </div>
+                          
+                          {/* Hashtags - Top Right */}
+                          <div className="flex flex-wrap gap-2 md:flex-col md:items-end">
+                            <span className="text-purple-400 text-sm">#app</span>
+                            <span className="text-purple-400 text-sm">#blockchain</span>
+                            <span className="text-purple-400 text-sm">#crypto</span>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+
+                    {/* Digital Tourism Lab Project */}
+                    <article className="py-6 border-b border-gray-800 last:border-b-0">
+                      <div className="flex flex-col lg:flex-row lg:items-start gap-6">
+                        {/* Image Section */}
+                        <div className="lg:w-64 lg:flex-shrink-0">
+                          <div className="relative h-48 lg:h-40 bg-gradient-to-br from-blue-900 to-green-900 rounded-lg overflow-hidden">
+                            {/* Mountain/landscape image placeholder */}
+                            <div className="w-full h-full bg-gradient-to-t from-green-800 via-blue-800 to-blue-600 relative">
+                              <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-green-900 to-transparent"></div>
+                              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-blue-300 rounded-full opacity-20"></div>
+                            </div>
+                            {/* Status badge overlay */}
+                            <div className="absolute top-3 left-3">
+                              <span className="border border-green-500 text-green-400 px-2 py-1 text-xs rounded bg-black/50">
+                                Started
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        
+                        {/* Content Section */}
+                        <div className="flex-1 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+                          <div className="flex-1">
+                            {/* Title */}
+                            <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">
+                              Digital Tourism Lab
+                            </h3>
+                            
+                            {/* Description */}
+                            <p className="text-gray-400 text-base leading-relaxed">
+                              Sustainable tourism initiatives through digital innovation and community engagement.
+                            </p>
+                          </div>
+                          
+                          {/* Hashtags - Top Right */}
+                          <div className="flex flex-wrap gap-2 md:flex-col md:items-end">
+                            <span className="text-purple-400 text-sm">#turismo</span>
+                            <span className="text-purple-400 text-sm">#digitaleconsapevole</span>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </section>
       </main>

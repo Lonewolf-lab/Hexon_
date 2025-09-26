@@ -131,14 +131,14 @@ const Footer = () => {
                 <div className="flex flex-col">
                     <p className="text-xs mb-4">Promosso da:</p>
                     <div className="flex items-start gap-3">
-                        <img src="https://cdn.prod.website-files.com/68343fa1c24481e96810ea51/683c399a5e82b76e828114f2_lugano-logo.svg" alt="Città di Lugano Logo" className="h-12 w-12"/>
+                        <img src="/lugano-logo.svg" alt="Città di Lugano Logo" className="h-12 w-12"/>
                         <p className="font-medium text-sm leading-snug pt-1">Città<br/>di Lugano</p>
                     </div>
                 </div>
                 <div className="flex flex-col">
                     <p className="text-xs mb-4">In partenariato con:</p>
                     <div className="flex items-start gap-3">
-                         <img src="https://cdn.prod.website-files.com/68343fa1c24481e96810ea51/683c39999f8489c09c2b4899_usi-logo.svg" alt="USI Logo" className="h-12 w-12"/>
+                         <img src="/usi-logo.svg" alt="USI Logo" className="h-12 w-12"/>
                          <p className="font-medium text-sm leading-snug pt-1">
                             Università<br/>della<br/>Svizzera<br/>italiana
                          </p>
@@ -147,7 +147,7 @@ const Footer = () => {
                  <div className="flex flex-col">
                     <p className="text-xs mb-4">Membro di:</p>
                      <div className="flex items-start gap-3">
-                         <img src="https://cdn.prod.website-files.com/68343fa1c24481e96810ea51/683c3999f2a3375c3f9104fc_enoll-logo.svg" alt="EnoLL Logo" className="h-12 w-12"/>
+                         <img src="/enoll-logo.svg" alt="EnoLL Logo" className="h-12 w-12"/>
                         <p className="font-medium text-sm leading-snug pt-1">
                             European<br/>Network of<br/>Living Labs
                         </p>

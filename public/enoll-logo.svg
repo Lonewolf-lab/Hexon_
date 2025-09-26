@@ -1,0 +1,11 @@
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="48" height="48" rx="4" fill="#2E8B57"/>
+  <text x="24" y="20" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="10" font-weight="bold">EnoLL</text>
+  <text x="24" y="34" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="8">Network</text>
+  <circle cx="12" cy="12" r="3" fill="white"/>
+  <circle cx="36" cy="12" r="3" fill="white"/>
+  <circle cx="24" cy="36" r="3" fill="white"/>
+  <line x1="12" y1="12" x2="36" y2="12" stroke="white" stroke-width="1"/>
+  <line x1="12" y1="12" x2="24" y2="36" stroke="white" stroke-width="1"/>
+  <line x1="36" y1="12" x2="24" y2="36" stroke="white" stroke-width="1"/>
+</svg>

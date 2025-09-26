@@ -1,7 +1,15 @@
 {
-    "name": "app",
-    "version": "0.1.0",
+    "name": "hexon",
+    "version": "1.0.0",
     "private": true,
+    "description": "Modern course selling platform built with Next.js 14",
+    "author": "Hexon Team",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Joohhnnyyy/Hexon.git"
+    },
+    "homepage": "https://github.com/Joohhnnyyy/Hexon",
+    "keywords": ["nextjs", "course-platform", "education", "typescript", "tailwindcss"],
     "scripts": {
         "dev": "next dev --turbopack",
         "build": "next build",
