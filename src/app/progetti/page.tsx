@@ -1,8 +1,73 @@
+'use client';
+
+import { cn } from "@/lib/utils";
 import Header from "@/components/sections/header";
 import Footer from "@/components/sections/footer";
-import { Search, ChevronDown } from "lucide-react";
+import FlowingMenu from "@/components/FlowingMenu/FlowingMenu";
+import { Search } from "lucide-react";
+import {
+  IconTerminal2,
+  IconEaseInOut,
+  IconCurrencyDollar,
+  IconCloud,
+} from "@tabler/icons-react";
 
 export default function Page() {
+  const menuItems = [
+    {
+      text: 'Programming',
+      link: '/progetti/courses/programming',
+      image: 'https://static0.howtogeekimages.com/wordpress/wp-content/uploads/2022/10/shutterstock_577183882.jpg'
+    },
+    {
+      text: 'Content Creation',
+      link: '/progetti/courses/content-creation',
+      image: 'https://d9pfvpeevxz0y.cloudfront.net/blog/wp-content/uploads/2021/05/Blog_052121-1200x675.jpg'
+    },
+    {
+      text: 'Business',
+      link: '/progetti/courses/business',
+      image: 'https://i.pinimg.com/736x/60/77/c0/6077c042e1327b473a468346d6e98f18.jpg'
+    },
+    {
+      text: 'Marketing',
+      link: '/progetti/courses/marketing',
+      image: 'https://cdn.pixabay.com/photo/2021/02/08/15/44/social-media-5995266_1280.png'
+    }
+  ];
+
+  const features = [
+    {
+      title: "Built for learners",
+      description:
+        "Built for engineers, developers, dreamers, thinkers and doers.",
+      icon: <IconTerminal2 />,
+      bgColor: "bg-gray-900",
+      borderColor: "border-gray-700",
+      textColor: "text-gray-300",
+      hoverBg: "hover:bg-gray-800",
+    },
+    {
+      title: "Ease of use",
+      description:
+        "It's as easy as using an Apple, and as expensive as buying one.",
+      icon: <IconEaseInOut />,
+      bgColor: "bg-gray-900",
+      borderColor: "border-gray-700",
+      textColor: "text-gray-300",
+      hoverBg: "hover:bg-gray-800",
+    },
+    {
+      title: "You will want to use it",
+      description: "We just cannot be taken down by anyone.",
+      icon: <IconCloud />,
+      bgColor: "bg-gray-900",
+      borderColor: "border-gray-700",
+      textColor: "text-gray-300",
+      hoverBg: "hover:bg-gray-800",
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-black text-white">
       <Header />
@@ -11,139 +76,40 @@ export default function Page() {
         <section className="bg-black">
           <div className="w-full px-0 py-8">
             <h1 className="text-[5rem] md:text-[10rem] font-thin text-white leading-none mb-0 pl-4">
-              Projects
+              Courses
             </h1>
           </div>
         </section>
 
-        {/* Full-width Search Bar */}
+        {/* Search Bar */}
         <section className="bg-black border-t border-gray-800">
           <div className="w-full px-2 py-4">
-            <div className="relative max-w-full">
-              <Search className="absolute left-6 top-1/2 transform -translate-y-1/2 text-gray-400 w-6 h-6" />
-              <input
-                type="text"
-                placeholder="Search"
-                className="w-full bg-black border border-gray-700 px-16 py-5 text-lg text-white placeholder-gray-400 focus:outline-none focus:border-gray-500 rounded-lg"
-              />
+            <div className="max-w-2xl mx-auto">
+              <div className="relative">
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <input
+                  type="text"
+                  placeholder="Search courses..."
+                  className="w-full bg-gray-900/50 border border-gray-700 px-12 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent rounded-full transition-all duration-200"
+                />
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Strict Two-Column Layout Container */}
+        {/* Main Content */}
         <section className="bg-black">
           <div className="w-full px-2 pt-10 pb-24">
-            {/* CSS Grid Container for Horizontal Division */}
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-              {/* Left Column - Filter Sidebar (1/4 = 25%) */}
-              <div className="lg:col-span-1">
-                <div className="relative">
-                  <select className="bg-gray-900 border border-gray-700 text-white px-4 py-3 pr-10 appearance-none focus:outline-none focus:border-gray-500 w-full">
-                    <option>Status</option>
-                    <option>In Progress</option>
-                    <option>Started</option>
-                    <option>Completed</option>
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                </div>
+              {/* Left Section: Feature Cards */}
+              <div className="lg:col-span-1 space-y-6">
+                <FeatureCards features={features} />
               </div>
 
-              {/* Right Column - Project Content (3/4 = 75%) */}
+              {/* Right Section: Flowing Menu for Courses */}
               <div className="lg:col-span-3">
-                <div className="space-y-8">
-                  {/* Project Grid */}
-                  <div className="space-y-8">
-                    {/* App MyLugano Project */}
-                    <article className="py-6 border-b border-gray-800 last:border-b-0">
-                      <div className="flex flex-col lg:flex-row lg:items-start gap-6">
-                        {/* Image Section */}
-                        <div className="lg:w-64 lg:flex-shrink-0">
-                          <div className="relative h-48 lg:h-40 bg-gradient-to-br from-gray-700 to-gray-900 rounded-lg overflow-hidden flex items-center justify-center">
-                            {/* Phone mockup */}
-                            <div className="relative">
-                              <div className="w-20 h-36 bg-white rounded-xl shadow-2xl transform rotate-12 relative overflow-hidden">
-                                <div className="absolute top-2 left-2 right-2 h-4 bg-red-500 rounded"></div>
-                                <div className="absolute top-8 left-2 right-2 h-2 bg-gray-200 rounded"></div>
-                                <div className="absolute top-12 left-2 right-2 h-2 bg-gray-200 rounded"></div>
-                                <div className="absolute bottom-4 left-2 right-2 h-6 bg-blue-500 rounded"></div>
-                              </div>
-                            </div>
-                            {/* Status badge overlay */}
-                            <div className="absolute top-3 left-3">
-                              <span className="border border-yellow-500 text-yellow-400 px-2 py-1 text-xs rounded bg-black/50">
-                                In Progress
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        {/* Content Section */}
-                        <div className="flex-1 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                          <div className="flex-1">
-                            {/* Title */}
-                            <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">
-                              App MyLugano
-                            </h3>
-                            
-                            {/* Description */}
-                            <p className="text-gray-400 text-base leading-relaxed">
-                              A digital ecosystem to get for joy the city and support the local economy.
-                            </p>
-                          </div>
-                          
-                          {/* Hashtags - Top Right */}
-                          <div className="flex flex-wrap gap-2 md:flex-col md:items-end">
-                            <span className="text-purple-400 text-sm">#app</span>
-                            <span className="text-purple-400 text-sm">#blockchain</span>
-                            <span className="text-purple-400 text-sm">#crypto</span>
-                          </div>
-                        </div>
-                      </div>
-                    </article>
-
-                    {/* Digital Tourism Lab Project */}
-                    <article className="py-6 border-b border-gray-800 last:border-b-0">
-                      <div className="flex flex-col lg:flex-row lg:items-start gap-6">
-                        {/* Image Section */}
-                        <div className="lg:w-64 lg:flex-shrink-0">
-                          <div className="relative h-48 lg:h-40 bg-gradient-to-br from-blue-900 to-green-900 rounded-lg overflow-hidden">
-                            {/* Mountain/landscape image placeholder */}
-                            <div className="w-full h-full bg-gradient-to-t from-green-800 via-blue-800 to-blue-600 relative">
-                              <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-green-900 to-transparent"></div>
-                              <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 w-8 h-8 bg-blue-300 rounded-full opacity-20"></div>
-                            </div>
-                            {/* Status badge overlay */}
-                            <div className="absolute top-3 left-3">
-                              <span className="border border-green-500 text-green-400 px-2 py-1 text-xs rounded bg-black/50">
-                                Started
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-                        
-                        {/* Content Section */}
-                        <div className="flex-1 flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-                          <div className="flex-1">
-                            {/* Title */}
-                            <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">
-                              Digital Tourism Lab
-                            </h3>
-                            
-                            {/* Description */}
-                            <p className="text-gray-400 text-base leading-relaxed">
-                              Sustainable tourism initiatives through digital innovation and community engagement.
-                            </p>
-                          </div>
-                          
-                          {/* Hashtags - Top Right */}
-                          <div className="flex flex-wrap gap-2 md:flex-col md:items-end">
-                            <span className="text-purple-400 text-sm">#turismo</span>
-                            <span className="text-purple-400 text-sm">#digitaleconsapevole</span>
-                          </div>
-                        </div>
-                      </div>
-                    </article>
-                  </div>
+                <div className="mb-12" style={{ height: '600px', position: 'relative' }}>
+                  <FlowingMenu items={menuItems} />
                 </div>
               </div>
             </div>
@@ -154,3 +120,32 @@ export default function Page() {
     </div>
   );
 }
+
+function FeatureCards({ features }) {
+  return (
+    <div className="grid grid-cols-1 gap-6 relative z-10 py-10 max-w-full mx-auto">
+      {features.map((feature, index) => (
+        <Feature key={feature.title} {...feature} />
+      ))}
+    </div>
+  );
+}
+
+const Feature = ({ title, description, icon, bgColor, borderColor, textColor, hoverBg }) => {
+  return (
+    <div
+      className={cn(
+        "flex flex-col py-8 relative rounded-lg border cursor-pointer transition-all duration-300",
+        bgColor,
+        borderColor,
+        textColor,
+        hoverBg,
+        "hover:scale-[1.02] hover:shadow-lg"
+      )}
+    >
+      <div className="mb-4 px-10">{icon}</div>
+      <h3 className="text-lg font-bold mb-2 px-10">{title}</h3>
+      <p className="text-sm px-10">{description}</p>
+    </div>
+  );
+};

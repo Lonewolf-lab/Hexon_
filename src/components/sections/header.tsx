@@ -97,9 +97,7 @@ export default function Header() {
               <Star className="h-10 w-10 text-white fill-white" />
             </div>
             <span className="ml-4 hidden text-lg leading-tight sm:block">
-              Lugano
-              <br />
-              Living Lab
+              HEXON
             </span>
           </Link>
         </div>

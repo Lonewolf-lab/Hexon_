@@ -7,15 +7,15 @@ const IntroductionSection = () => {
         {/* Top Row with Heading */}
         <div className="grid grid-cols-12 gap-x-6 mb-16 lg:mb-24">
           <div className="col-span-6 md:col-span-3 lg:col-span-4">
-            <p className="text-secondary-text text-base">/ Chi siamo</p>
+            <p className="text-secondary-text text-base">/ About Us</p>
           </div>
           <div className="col-span-12 md:col-span-8 lg:col-span-6 order-last md:order-none mt-8 md:mt-0">
             <h2 className="text-3xl lg:text-[2.5rem] text-primary-text font-light leading-snug">
-              Promosso dalla Città di Lugano come contributo concreto alla realizzazione delle Linee di Sviluppo 2030 e della Strategia Digitale 2025-2030.
+              Revolutionizing education through adaptive learning technology for personalized student success.
             </h2>
           </div>
           <div className="col-span-6 md:col-span-1 lg:col-span-2 text-right">
-            <p className="text-primary-text text-base">L*3</p>
+            <p className="text-primary-text text-base">HEXON</p>
           </div>
         </div>
 
@@ -27,10 +27,10 @@ const IntroductionSection = () => {
           <div className="col-span-12 md:col-span-9 lg:col-span-8">
             <div className="md:columns-2 md:gap-8">
               <p className="text-secondary-text text-base leading-relaxed break-inside-avoid-column mb-8 md:mb-0">
-                Pensato come un laboratorio di innovazione aperto e diffuso su tutta l’area della città, coinvolge un vasto partenariato di attori pubblici e privati interessati a fare crescere l’ecosistema locale dell’innovazione. Concetto questo racchiuso nel “motto” del nostro Lab: Sharing Innovation.
+                HEXON is a cutting-edge e-learning platform that leverAGES artificial intelligence to provide personalized learning experiences. Our adaptive learning technology analyzes each student's strengths and weaknesses, creating a customized learning path that evolves with their progress.
               </p>
               <p className="text-secondary-text text-base leading-relaxed break-inside-avoid-column">
-                Le nostre attività spaziano dalla creazione e sviluppo di progetti d’innovazione, eventi e contenuti divulgativi sui temi legati alla trasformazione digitale e il sostegno attivo (non economico) a progetti concreti di cittadini e/o partner. Lo scopo ultimo del laboratorio è favorire il miglioramento della qualità di vita, promuovere la crescita economica e la competitività della regione, puntando su trasformazione digitale e sostenibilità.
+                With a vast library of interactive courses, real-time progress tracking, and AI-powered recommendations, we're making quality education accessible to everyone, everywhere. Our mission is to transform traditional learning into an engaging, effective, and personalized journey for every student.
               </p>
             </div>
           </div>

@@ -9,7 +9,13 @@
         "url": "https://github.com/Joohhnnyyy/Hexon.git"
     },
     "homepage": "https://github.com/Joohhnnyyy/Hexon",
-    "keywords": ["nextjs", "course-platform", "education", "typescript", "tailwindcss"],
+    "keywords": [
+        "nextjs",
+        "course-platform",
+        "education",
+        "typescript",
+        "tailwindcss"
+    ],
     "scripts": {
         "dev": "next dev --turbopack",
         "build": "next build",
@@ -73,6 +79,7 @@
         "embla-carousel-react": "^8.6.0",
         "estree-walker": "2.0.2",
         "framer-motion": "^12.23.12",
+        "gsap": "^3.13.0",
         "input-otp": "^1.4.2",
         "lucide-react": "^0.544.0",
         "mini-svg-data-uri": "^1.4.4",

@@ -8,61 +8,43 @@ interface Award {
 
 const awardsData: Award[] = [
   {
-    name: "ENoLL European Network of\u00A0Living Labs",
-    recipient: "Lugano Living Lab",
-    status: "Certificazione",
+    name: "Global EdTech Innovation Award 2024",
+    recipient: "HEXON Platform",
+    status: "Winner - Best Adaptive Learning Solution",
   },
   {
-    name: "Concorso e-Partecipazione 2020",
-    recipient: "Speakers'corner",
-    status: "Vincitore",
+    name: "AI in Education Excellence",
+    recipient: "HEXON AI Engine",
+    status: "Top 5 Finalist - 2023",
   },
   {
-    name: "Best Practitioner Award 2021 dei Living Labs OLLD2021",
-    recipient: "Lugano Living Lab",
-    status: "Vincitore",
-  },
-  {
-    name: "Smart City Award IEEE 2022",
-    recipient: "3AChain",
-    status: "Finalista",
-  },
-  {
-    name: "100 Swiss Digital Shapers 2023",
-    recipient: "Head di Lugano Living Lab, Robert Bregy",
-    status: "Nomination",
-  },
-  {
-    name: "Smart City Award IEEE 2023",
-    recipient: "MyLugano",
-    status: "Vincitore",
+    name: "Digital Learning Innovation Award",
+    recipient: "HEXON Learning Platform",
+    status: "Winner - 2022",
   },
 ];
 
-const AwardItem: React.FC<{ award: Award }> = ({ award }) => (
-  <div>
-    <div className="flex justify-between items-start py-6">
-      <div className="pr-8">
-        <p className="text-xl font-normal">{award.name}</p>
-        <p className="text-muted-foreground text-sm font-normal mt-1">{award.recipient}</p>
-      </div>
-      <div className="text-right flex-shrink-0">
-        <p className="text-base font-normal">{award.status}</p>
-      </div>
-    </div>
-    <div className="h-px bg-border" />
-  </div>
-);
-
 const AwardsSection = () => {
   return (
-    <section className="bg-background text-foreground py-20 lg:py-24">
-      <div className="container">
-        <h2 className="text-4xl font-normal leading-[1.3]">Awards e riconoscimenti</h2>
-        <div className="h-px bg-border mt-5 mb-8" />
-        <div>
+    <section className="bg-background text-foreground py-20">
+      <div className="container mx-auto px-6">
+        <div className="flex justify-between items-end mb-12">
+          <h2 className="text-4xl font-light">Awards & Recognition</h2>
+          <p className="text-muted-foreground text-sm">Our commitment to educational excellence</p>
+        </div>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {awardsData.map((award, index) => (
-            <AwardItem key={index} award={award} />
+            <div 
+              key={index} 
+              className="border border-border p-6 rounded-lg hover:bg-accent/10 transition-colors"
+            >
+              <h3 className="text-xl font-medium mb-2">{award.name}</h3>
+              <p className="text-muted-foreground mb-3">{award.recipient}</p>
+              <span className="inline-block px-3 py-1 bg-accent/20 text-accent-foreground rounded-full text-sm">
+                {award.status}
+              </span>
+            </div>
           ))}
         </div>
       </div>

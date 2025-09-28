@@ -9,13 +9,13 @@ const HeroSection = () => {
             className="text-base text-muted-foreground"
             aria-label="/ Chi siamo"
           >
-            / Chi siamo
+            / About Us
           </p>
           <h1
             className="font-light text-[92px] leading-[1.1] tracking-tighter"
             aria-label="Lugano Living Lab"
           >
-            Lugano Living Lab
+            Hexon
           </h1>
         </div>
       </div>
