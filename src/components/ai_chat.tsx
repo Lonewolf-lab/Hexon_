@@ -1,706 +1,439 @@
-"use client";
+"use client"
 
-import { useEffect, useRef, useCallback, useTransition } from "react";
-import { useState } from "react";
-import { cn } from "@/lib/utils";
-import {
-    ImageIcon,
-    FileUp,
-    Figma,
-    MonitorIcon,
-    CircleUserRound,
-    ArrowUpIcon,
-    Paperclip,
-    PlusIcon,
-    SendIcon,
-    XIcon,
-    LoaderIcon,
-    Sparkles,
-    Command,
-    Bot,
-} from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
-import * as React from "react"
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
+import type React from "react"
 
-interface UseAutoResizeTextareaProps {
-    minHeight: number;
-    maxHeight?: number;
-}
+import { useState, useRef, useEffect } from "react"
+import { motion, AnimatePresence } from "framer-motion"
+import { Send, Paperclip, Sparkles, Bot, User, Globe, ImageIcon, Code, FileImage } from "lucide-react"
+import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm"
 
-function useAutoResizeTextarea({
-    minHeight,
-    maxHeight,
-}: UseAutoResizeTextareaProps) {
-    const textareaRef = useRef<HTMLTextAreaElement>(null);
+const SUGGESTED_PROMPTS = [
+  "Tell me a fun fact!",
+  "Recommend a movie to watch.",
+  "How do I make pancakes?",
+  "What's the latest in tech?",
+]
 
-    const adjustHeight = useCallback(() => {
-        const textarea = textareaRef.current;
-        if (textarea) {
-            textarea.style.height = `${minHeight}px`;
-            const scrollHeight = textarea.scrollHeight;
-            const newHeight = maxHeight
-                ? Math.min(scrollHeight, maxHeight)
-                : scrollHeight;
-            textarea.style.height = `${newHeight}px`;
-        }
-    }, [minHeight, maxHeight]);
-
-    return {
-        textareaRef,
-        adjustHeight,
-    };
-
-    useEffect(() => {
-        adjustHeight();
-    }, [adjustHeight]);
-
-    useEffect(() => {
-        const textarea = textareaRef.current;
-        if (textarea) {
-            textarea.addEventListener('input', adjustHeight);
-            return () => textarea.removeEventListener('input', adjustHeight);
-        }
-    }, [adjustHeight]);
-}
-
-interface CommandSuggestion {
-    icon: React.ReactNode;
-    label: string;
-    description: string;
-    prefix: string;
-}
-
-interface TextareaProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
-  containerClassName?: string;
-  showRing?: boolean;
-}
-
-const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
-  ({ className, containerClassName, showRing = true, ...props }, ref) => {
-    return (
-      <div className={cn(
-        "relative",
-        containerClassName
-      )}>
-        <textarea
-          className={cn(
-            "flex min-h-[60px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50",
-            showRing && "focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-            className
-          )}
-          ref={ref}
-          {...props}
-        />
-      </div>
-    )
-  }
-)
-Textarea.displayName = "Textarea"
+const FEATURE_CARDS = [
+  {
+    icon: <FileImage className="w-5 h-5" />,
+    title: "Import from Figma",
+    description: "Import designs and assets from Figma",
+    gradient: "from-blue-500 to-blue-700",
+    endpoint: "/figma",
+  },
+  {
+    icon: <Globe className="w-5 h-5" />,
+    title: "Multi-language Support",
+    description: "Communicate fluently in various languages",
+    gradient: "from-orange-500 to-red-600",
+    endpoint: "/translate",
+  },
+  {
+    icon: <ImageIcon className="w-5 h-5" />,
+    title: "Image Generation",
+    description: "Creates custom images based on user prompts",
+    gradient: "from-purple-500 to-pink-600",
+    endpoint: "/image",
+  },
+  {
+    icon: <Code className="w-5 h-5" />,
+    title: "Code snippets",
+    description: "Provides quick, functional code examples on demand",
+    gradient: "from-teal-500 to-cyan-600",
+    endpoint: "/code",
+  },
+]
 
 interface Message {
-    id: string;
-    content: string;
-    role: 'user' | 'assistant';
-    timestamp: Date;
-    isStreaming?: boolean;
+  id: string
+  role: "user" | "assistant"
+  content: string
 }
 
 export function AnimatedAIChat() {
-    const [value, setValue] = useState("");
-    const [messages, setMessages] = useState<Message[]>([]);
-    const [attachments, setAttachments] = useState<string[]>([]);
-    const [isTyping, setIsTyping] = useState(false);
-    const [isPending, startTransition] = useTransition();
-    const [activeSuggestion, setActiveSuggestion] = useState<number>(-1);
-    const [showCommandPalette, setShowCommandPalette] = useState(false);
-    const [recentCommand, setRecentCommand] = useState<string | null>(null);
-    const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
-    const [isLoading, setIsLoading] = useState(false);
-    const { textareaRef, adjustHeight } = useAutoResizeTextarea({
-        minHeight: 60,
-        maxHeight: 200,
-    });
-    const [inputFocused, setInputFocused] = useState(false);
-    const commandPaletteRef = useRef<HTMLDivElement>(null);
-    const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [input, setInput] = useState("")
+  const [attachments, setAttachments] = useState<File[]>([])
+  const [messages, setMessages] = useState<Message[]>([])
+  const [isLoading, setIsLoading] = useState(false)
+  const messagesEndRef = useRef<HTMLDivElement>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
-    const commandSuggestions: CommandSuggestion[] = [
-        { 
-            icon: <ImageIcon className="w-4 h-4" />, 
-            label: "Clone UI", 
-            description: "Generate a UI from a screenshot", 
-            prefix: "/clone" 
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }, [messages])
+
+  const handleSend = async () => {
+    if (!input.trim() || isLoading) return
+
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: "user",
+      content: input.trim(),
+    }
+
+    setMessages((prev) => [...prev, userMessage])
+    setInput("")
+    setIsLoading(true)
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
         },
-        { 
-            icon: <Figma className="w-4 h-4" />, 
-            label: "Import Figma", 
-            description: "Import a design from Figma", 
-            prefix: "/figma" 
-        },
-        { 
-            icon: <MonitorIcon className="w-4 h-4" />, 
-            label: "Create Page", 
-            description: "Generate a new web page", 
-            prefix: "/page" 
-        },
-        { 
-            icon: <Sparkles className="w-4 h-4" />, 
-            label: "Improve", 
-            description: "Improve existing UI design", 
-            prefix: "/improve" 
-        },
-    ];
+        body: JSON.stringify({
+          messages: [...messages, userMessage].map((msg) => ({
+            role: msg.role,
+            content: msg.content,
+          })),
+        }),
+      })
 
-    const sendMessageToGemini = async (message: string, onChunk: (chunk: string) => void) => {
-        try {
-            const response = await fetch('/api/chat', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ message }),
-            });
+      if (!response.ok) {
+        throw new Error("Failed to get response")
+      }
 
-            if (!response.ok) {
-                throw new Error('Failed to send message');
-            }
+      const reader = response.body?.getReader()
+      const decoder = new TextDecoder()
+      let assistantContent = ""
 
-            const reader = response.body?.getReader();
-            if (!reader) {
-                throw new Error('No reader available');
-            }
+      const assistantMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: "",
+      }
 
-            const decoder = new TextDecoder();
-            let buffer = '';
+      setMessages((prev) => [...prev, assistantMessage])
 
-            while (true) {
-                const { done, value } = await reader.read();
-                if (done) break;
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
 
-                buffer += decoder.decode(value, { stream: true });
-                const lines = buffer.split('\n');
-                buffer = lines.pop() || '';
+          const chunk = decoder.decode(value)
+          const lines = chunk.split("\n")
 
-                for (const line of lines) {
-                    if (line.startsWith('data: ')) {
-                        const data = line.slice(6);
-                        if (data === '[DONE]') {
-                            return;
-                        }
-                        try {
-                            const parsed = JSON.parse(data);
-                            if (parsed.choices?.[0]?.delta?.content) {
-                                onChunk(parsed.choices[0].delta.content);
-                            }
-                        } catch (e) {
-                            console.error('Error parsing chunk:', e);
-                        }
-                    }
+          for (const line of lines) {
+            if (line.startsWith("data: ")) {
+              const data = line.slice(6)
+              if (data === "[DONE]") continue
+
+              try {
+                const parsed = JSON.parse(data)
+                if (parsed.content) {
+                  assistantContent += parsed.content
+                  setMessages((prev) =>
+                    prev.map((msg) => (msg.id === assistantMessage.id ? { ...msg, content: assistantContent } : msg)),
+                  )
                 }
+              } catch (e) {
+                // Ignore parsing errors for partial chunks
+              }
             }
-        } catch (error) {
-            console.error('Error sending message:', error);
-            onChunk('Sorry, there was an error processing your message.');
+          }
         }
-    };
+      }
+    } catch (error) {
+      console.error("Chat error:", error)
+      const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        role: "assistant",
+        content: "Sorry, I encountered an error. Please try again.",
+      }
+      setMessages((prev) => [...prev, errorMessage])
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault()
+      handleSend()
+    }
+  }
 
-    useEffect(() => {
-        if (value.startsWith('/')) {
-            const matchingSuggestions = commandSuggestions.filter(s => 
-                s.prefix.toLowerCase().includes(value.toLowerCase())
-            );
-            setShowCommandPalette(matchingSuggestions.length > 0);
-        } else {
-            setShowCommandPalette(false);
-        }
-    }, [value]);
+  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    setAttachments((prev) => [...prev, ...files])
+  }
 
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (commandPaletteRef.current && !commandPaletteRef.current.contains(event.target as Node)) {
-                setShowCommandPalette(false);
-            }
-        };
+  const removeAttachment = (index: number) => {
+    setAttachments((prev) => prev.filter((_, i) => i !== index))
+  }
 
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
+  const selectPrompt = (prompt: string) => {
+    setInput(prompt)
+  }
 
-    useEffect(() => {
-        const handleMouseMove = (e: MouseEvent) => {
-            setMousePosition({ x: e.clientX, y: e.clientY });
-        };
+  const handleFeatureClick = (endpoint: string) => {
+    setInput(endpoint + " ")
+  }
 
-        document.addEventListener('mousemove', handleMouseMove);
-        return () => {
-            document.removeEventListener('mousemove', handleMouseMove);
-        };
-    }, []);
+  return (
+    <div className="min-h-screen bg-black text-white relative overflow-hidden">
+      {/* Animated Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-violet-500/10 rounded-full blur-3xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
+        <div className="absolute top-1/2 right-1/3 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl animate-pulse delay-500" />
+      </div>
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            if (showCommandPalette && activeSuggestion >= 0) {
-                selectCommandSuggestion(activeSuggestion);
-            } else {
-                handleSendMessage();
-            }
-        } else if (e.key === 'ArrowUp' && showCommandPalette) {
-            e.preventDefault();
-            setActiveSuggestion(prev => 
-                prev <= 0 ? commandSuggestions.length - 1 : prev - 1
-            );
-        } else if (e.key === 'ArrowDown' && showCommandPalette) {
-            e.preventDefault();
-            setActiveSuggestion(prev => 
-                prev >= commandSuggestions.length - 1 ? 0 : prev + 1
-            );
-        } else if (e.key === 'Escape') {
-            setShowCommandPalette(false);
-            setActiveSuggestion(-1);
-        }
-    };
-
-    const handleSendMessage = async () => {
-        if (!value.trim() || isLoading) return;
-
-        const messageText = value.trim();
-        setValue("");
-        adjustHeight();
-        setIsLoading(true);
-
-        const userMessage: Message = {
-            id: Date.now().toString(),
-            content: messageText,
-            role: 'user',
-            timestamp: new Date(),
-        };
-
-        setMessages(prev => [...prev, userMessage]);
-
-        const assistantMessage: Message = {
-            id: (Date.now() + 1).toString(),
-            content: "",
-            role: 'assistant',
-            timestamp: new Date(),
-            isStreaming: true,
-        };
-
-        setMessages(prev => [...prev, assistantMessage]);
-
-        await sendMessageToGemini(messageText, (chunk) => {
-            setMessages(prev => prev.map(msg => 
-                msg.id === assistantMessage.id 
-                    ? { ...msg, content: msg.content + chunk }
-                    : msg
-            ));
-        });
-
-        setMessages(prev => prev.map(msg => 
-            msg.id === assistantMessage.id 
-                ? { ...msg, isStreaming: false }
-                : msg
-        ));
-
-        setIsLoading(false);
-    };
-
-    const handleAttachFile = () => {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.onchange = (e) => {
-            const file = (e.target as HTMLInputElement).files?.[0];
-            if (file) {
-                setAttachments(prev => [...prev, file.name]);
-            }
-        };
-        input.click();
-    };
-
-    const removeAttachment = (index: number) => {
-        setAttachments(prev => prev.filter((_, i) => i !== index));
-    };
-
-    const selectCommandSuggestion = (index: number) => {
-        const suggestion = commandSuggestions[index];
-        setValue(suggestion.prefix + ' ');
-        setShowCommandPalette(false);
-        setActiveSuggestion(-1);
-        textareaRef.current?.focus();
-    };
-
-    return (
-        <>
-            {/* Messages End Reference */}
-            <div ref={messagesEndRef} />
-            
-            <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 relative overflow-hidden">
-                {/* Animated Background Elements */}
-            <div className="absolute inset-0 w-full h-full overflow-hidden pointer-events-none">
-                <div className="absolute top-0 left-1/4 w-96 h-96 bg-violet-500/20 rounded-full mix-blend-normal filter blur-[128px] animate-pulse" />
-                <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-indigo-500/20 rounded-full mix-blend-normal filter blur-[128px] animate-pulse delay-700" />
-                <div className="absolute top-1/4 right-1/3 w-64 h-64 bg-fuchsia-500/20 rounded-full mix-blend-normal filter blur-[128px] animate-pulse delay-1000" />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-900/50 to-transparent" />
+      <div className="relative z-10 flex flex-col h-screen max-w-6xl mx-auto">
+        {/* Header */}
+        <header className="flex items-center justify-between p-6 border-b border-gray-800/50">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+              <Bot className="w-6 h-6 text-white" />
             </div>
-
-            {/* Main Layout */}
-            <div className="relative z-10 min-h-screen grid grid-rows-[auto_1fr_auto] max-w-7xl mx-auto">
-                {/* Header */}
-                <header className="px-6 py-8 border-b border-white/10 backdrop-blur-sm">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
-                                <Bot className="w-6 h-6 text-white" />
-                            </div>
-                            <div>
-                                <h1 className="text-2xl font-bold text-white">AI Assistant</h1>
-                                <p className="text-sm text-white/60">Powered by advanced AI technology</p>
-                            </div>
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <div className="px-3 py-1.5 rounded-full bg-green-500/20 border border-green-500/30">
-                                <span className="text-xs font-medium text-green-400">Online</span>
-                            </div>
-                        </div>
-                    </div>
-                </header>
-
-                {/* Main Content */}
-                <main className="h-[calc(100vh-200px)] overflow-hidden px-6 py-6">
-                    <div className="h-full max-w-4xl mx-auto">
-                        <motion.div 
-                            className="h-full flex flex-col"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6, ease: "easeOut" }}
-                        >
-                            {/* Messages Container */}
-                            <div className="h-full overflow-y-auto scrollbar-thin scrollbar-thumb-white/20 scrollbar-track-transparent">
-                                <div className="space-y-6 pb-6">
-                                    
-                                    {messages.length === 0 && (
-                                        <div className="flex flex-col items-center justify-center h-full min-h-[400px] text-center">
-                                            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-violet-500/20 to-purple-600/20 flex items-center justify-center mb-6">
-                                                <Sparkles className="w-8 h-8 text-violet-400" />
-                                            </div>
-                                            <h2 className="text-2xl font-semibold text-white mb-3">Welcome to AI Assistant</h2>
-                                            <p className="text-white/60 max-w-md mb-8">Start a conversation by typing a message below. I'm here to help with any questions or tasks you have.</p>
-                                            <div className="grid grid-cols-2 gap-3 max-w-lg">
-                                                {commandSuggestions.map((suggestion, index) => (
-                                                    <button
-                                                        key={index}
-                                                        onClick={() => setValue(suggestion.prefix + ' ')}
-                                                        className="p-4 rounded-xl bg-white/5 border border-white/10 hover:bg-white/10 transition-all duration-200 text-left group"
-                                                    >
-                                                        <div className="flex items-center gap-3 mb-2">
-                                                            <div className="text-violet-400 group-hover:text-violet-300 transition-colors">
-                                                                {suggestion.icon}
-                                                            </div>
-                                                            <span className="font-medium text-white text-sm">{suggestion.label}</span>
-                                                        </div>
-                                                        <p className="text-xs text-white/60">{suggestion.description}</p>
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        </div>
-                                    )}
-                                    
-                                    {messages.map((message) => (
-                                        <motion.div
-                                            key={message.id}
-                                            initial={{ opacity: 0, y: 20 }}
-                                            animate={{ opacity: 1, y: 0 }}
-                                            transition={{ duration: 0.3 }}
-                                            className={cn(
-                                                "flex gap-3",
-                                                message.role === 'user' ? "justify-end" : "justify-start"
-                                            )}
-                                        >
-                                            {message.role === 'assistant' && (
-                                                <div className="w-8 h-8 rounded-full bg-purple-500 flex items-center justify-center text-white text-sm font-medium">
-                                                    <Bot className="w-4 h-4" />
-                                                </div>
-                                            )}
-                                            <div
-                                                className={cn(
-                                                    "max-w-[90%] rounded-2xl px-4 py-2 text-sm backdrop-blur-md",
-                                                    message.role === 'user'
-                                                        ? "bg-white/20 text-white border border-white/30 shadow-lg"
-                                                        : "bg-white/10 text-white border border-white/20 shadow-lg backdrop-blur-xl"
-                                                )}
-                                            >
-                                                <div className="prose prose-invert prose-sm max-w-none">
-                                                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                                                        {message.content}
-                                                    </ReactMarkdown>
-                                                </div>
-                                                {message.isStreaming && <TypingDots />}
-                                            </div>
-                                            {message.role === 'user' && (
-                                                <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center text-white text-sm font-medium">
-                                                    <CircleUserRound className="w-4 h-4" />
-                                                </div>
-                                            )}
-                                        </motion.div>
-                                    ))}
-                                </div>
-                            </div>
-                        </motion.div>
-                    </div>
-                </main>
-
-                {/* Footer with Input Area */}
-                <footer className="px-6 py-4 border-t border-white/10 backdrop-blur-sm">
-                    <div className="max-w-4xl mx-auto">
-                        <motion.div 
-                            className="backdrop-blur-2xl bg-white/[0.02] rounded-2xl border border-white/[0.05] shadow-2xl relative"
-                            initial={{ scale: 0.98 }}
-                            animate={{ scale: 1 }}
-                            transition={{ delay: 0.1 }}
-                        >
-                            {/* Command palette */}
-                            <AnimatePresence>
-                                {showCommandPalette && (
-                                    <motion.div 
-                                        ref={commandPaletteRef}
-                                        className="absolute left-4 right-4 bottom-full mb-2 backdrop-blur-xl bg-black/90 rounded-lg z-50 shadow-lg border border-white/10 overflow-hidden"
-                                        initial={{ opacity: 0, y: 5 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        exit={{ opacity: 0, y: 5 }}
-                                        transition={{ duration: 0.15 }}
-                                    >
-                                        <div className="py-1 bg-black/95">
-                                            {commandSuggestions.map((suggestion, index) => (
-                                                <motion.div
-                                                    key={suggestion.prefix}
-                                                    className={cn(
-                                                        "flex items-center gap-2 px-3 py-2 text-xs transition-colors cursor-pointer",
-                                                        activeSuggestion === index 
-                                                            ? "bg-white/10 text-white" 
-                                                            : "text-white/70 hover:bg-white/5"
-                                                    )}
-                                                    onClick={() => selectCommandSuggestion(index)}
-                                                    initial={{ opacity: 0 }}
-                                                    animate={{ opacity: 1 }}
-                                                    transition={{ delay: index * 0.03 }}
-                                                >
-                                                    <div className="w-5 h-5 flex items-center justify-center text-white/60">
-                                                        {suggestion.icon}
-                                                    </div>
-                                                    <div className="font-medium">{suggestion.label}</div>
-                                                    <div className="text-white/40 text-xs ml-1">
-                                                        {suggestion.prefix}
-                                                    </div>
-                                                </motion.div>
-                                            ))}
-                                        </div>
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-
-                            <div className="p-4">
-                                <Textarea
-                                    ref={textareaRef}
-                                    value={value}
-                                    onChange={(e) => {
-                                        setValue(e.target.value);
-                                        adjustHeight();
-                                    }}
-                                    onKeyDown={handleKeyDown}
-                                    onFocus={() => setInputFocused(true)}
-                                    onBlur={() => setInputFocused(false)}
-                                    placeholder="Ask me anything..."
-                                    containerClassName="w-full"
-                                    className={cn(
-                                        "w-full px-4 py-3",
-                                        "resize-none",
-                                        "bg-transparent",
-                                        "border-none",
-                                        "text-white/90 text-sm",
-                                        "focus:outline-none",
-                                        "placeholder:text-white/20",
-                                        "min-h-[60px]"
-                                    )}
-                                    style={{
-                                        overflow: "hidden",
-                                    }}
-                                    showRing={false}
-                                />
-                            </div>
-
-                            <AnimatePresence>
-                                {attachments.length > 0 && (
-                                    <motion.div 
-                                        className="px-4 pb-3 flex gap-2 flex-wrap"
-                                        initial={{ opacity: 0, height: 0 }}
-                                        animate={{ opacity: 1, height: "auto" }}
-                                        exit={{ opacity: 0, height: 0 }}
-                                    >
-                                        {attachments.map((file, index) => (
-                                            <motion.div
-                                                key={index}
-                                                className="flex items-center gap-2 text-xs bg-white/[0.03] py-1.5 px-3 rounded-lg text-white/70"
-                                                initial={{ opacity: 0, scale: 0.9 }}
-                                                animate={{ opacity: 1, scale: 1 }}
-                                                exit={{ opacity: 0, scale: 0.9 }}
-                                            >
-                                                <span>{file}</span>
-                                                <button 
-                                                    onClick={() => removeAttachment(index)}
-                                                    className="text-white/40 hover:text-white transition-colors"
-                                                >
-                                                    <XIcon className="w-3 h-3" />
-                                                </button>
-                                            </motion.div>
-                                        ))}
-                                    </motion.div>
-                                )}
-                            </AnimatePresence>
-
-                            <div className="p-4 border-t border-white/[0.05] flex items-center justify-between gap-4">
-                                <div className="flex items-center gap-3">
-                                    <motion.button
-                                        type="button"
-                                        onClick={handleAttachFile}
-                                        whileTap={{ scale: 0.94 }}
-                                        className="p-2 text-white/40 hover:text-white/90 rounded-lg transition-colors relative group"
-                                    >
-                                        <Paperclip className="w-4 h-4" />
-                                        <motion.span
-                                            className="absolute inset-0 bg-white/[0.05] rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                                            layoutId="button-highlight"
-                                        />
-                                    </motion.button>
-                                    <motion.button
-                                        type="button"
-                                        data-command-button
-                                        onClick={(e) => {
-                                            setShowCommandPalette(!showCommandPalette);
-                                        }}
-                                        whileTap={{ scale: 0.94 }}
-                                        className={cn(
-                                            "p-2 text-white/40 hover:text-white/90 rounded-lg transition-colors relative group",
-                                            showCommandPalette && "bg-white/10 text-white/90"
-                                        )}
-                                    >
-                                        <Command className="w-4 h-4" />
-                                        <motion.span
-                                            className="absolute inset-0 bg-white/[0.05] rounded-lg opacity-0 group-hover:opacity-100 transition-opacity"
-                                            layoutId="button-highlight"
-                                        />
-                                    </motion.button>
-                                </div>
-                                
-                                <motion.button
-                                    type="button"
-                                    onClick={handleSendMessage}
-                                    whileHover={{ scale: 1.01 }}
-                                    whileTap={{ scale: 0.98 }}
-                                    disabled={isLoading || !value.trim()}
-                                    className={cn(
-                                        "px-4 py-2 rounded-lg text-sm font-medium transition-all",
-                                        "flex items-center gap-2",
-                                        value.trim() && !isLoading
-                                            ? "bg-white text-[#0A0A0B] shadow-lg shadow-white/10"
-                                            : "bg-white/[0.05] text-white/40"
-                                    )}
-                                >
-                                    {isLoading ? (
-                                        <LoaderIcon className="w-4 h-4 animate-[spin_2s_linear_infinite]" />
-                                    ) : (
-                                        <SendIcon className="w-4 h-4" />
-                                    )}
-                                    <span>{isLoading ? 'Sending...' : 'Send'}</span>
-                                </motion.button>
-                            </div>
-                        </motion.div>
-
-                        {messages.length === 0 && (
-                            <div className="flex flex-wrap items-center justify-center gap-2 mt-6">
-                                {commandSuggestions.map((suggestion, index) => (
-                                    <motion.button
-                                        key={suggestion.prefix}
-                                        onClick={() => selectCommandSuggestion(index)}
-                                        className="flex items-center gap-2 px-3 py-2 bg-white/[0.02] hover:bg-white/[0.05] rounded-lg text-sm text-white/60 hover:text-white/90 transition-all relative group"
-                                        initial={{ opacity: 0, y: 10 }}
-                                        animate={{ opacity: 1, y: 0 }}
-                                        transition={{ delay: index * 0.1 }}
-                                    >
-                                        {suggestion.icon}
-                                        <span>{suggestion.label}</span>
-                                        <motion.div
-                                            className="absolute inset-0 border border-white/[0.05] rounded-lg"
-                                            initial={false}
-                                            animate={{
-                                                opacity: [0, 1],
-                                                scale: [0.98, 1],
-                                            }}
-                                            transition={{
-                                                duration: 0.3,
-                                                ease: "easeOut",
-                                            }}
-                                        />
-                                    </motion.button>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                </footer>
+            <div>
+              <h1 className="text-xl font-semibold">Askk AI</h1>
+              <p className="text-sm text-gray-400">Advanced AI Assistant</p>
             </div>
-
-            {/* Mouse Follow Effect */}
-            {inputFocused && (
-                <motion.div 
-                    className="fixed w-[50rem] h-[50rem] rounded-full pointer-events-none z-0 opacity-[0.02] bg-gradient-to-r from-violet-500 via-fuchsia-500 to-indigo-500 blur-[96px]"
-                    animate={{
-                        x: mousePosition.x - 400,
-                        y: mousePosition.y - 400,
-                    }}
-                    transition={{
-                        type: "spring",
-                        damping: 25,
-                        stiffness: 150,
-                        mass: 0.5,
-                    }}
-                />
-            )}
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="px-3 py-1 rounded-full bg-green-500/20 border border-green-500/30">
+              <span className="text-xs font-medium text-green-400">Online</span>
             </div>
-        </>
-    );
-}
+          </div>
+        </header>
 
-function TypingDots() {
-    return (
-        <div className="flex items-center ml-1">
-            {[1, 2, 3].map((dot) => (
+        {/* Main Content */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {messages.length === 0 ? (
+            /* Welcome Screen */
+            <div className="flex-1 flex flex-col items-center justify-center p-6 text-center">
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="max-w-4xl w-full"
+              >
+                <h1 className="text-4xl md:text-5xl font-light mb-4">
+                  Welcome to <span className="font-semibold">Askk AI.</span>
+                </h1>
+                <p className="text-gray-400 text-lg mb-12">
+                  Uses multiple sources and tools to answer questions with citations
+                </p>
+
+                {/* Feature Cards - Made smaller and added click handlers */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-12">
+                  {FEATURE_CARDS.map((feature, index) => (
+                    <motion.div
+                      key={feature.title}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.6, delay: index * 0.1 }}
+                      onClick={() => handleFeatureClick(feature.endpoint)}
+                      className={`relative p-4 rounded-2xl bg-gradient-to-br ${feature.gradient} overflow-hidden group cursor-pointer hover:scale-105 transition-transform duration-300`}
+                    >
+                      {/* Sparkle effects */}
+                      <div className="absolute top-3 right-3 opacity-60">
+                        <Sparkles className="w-3 h-3 text-white" />
+                      </div>
+                      <div className="absolute top-4 right-6 opacity-30">
+                        <Sparkles className="w-2 h-2 text-white" />
+                      </div>
+
+                      <div className="relative z-10">
+                        <div className="text-white mb-2">{feature.icon}</div>
+                        <h3 className="text-white font-semibold mb-1 text-sm">{feature.title}</h3>
+                        <p className="text-white/80 text-xs">{feature.description}</p>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+
+                {/* Suggested Prompts */}
+                <div className="flex flex-wrap justify-center gap-3 mb-8">
+                  {SUGGESTED_PROMPTS.map((prompt, index) => (
+                    <motion.button
+                      key={prompt}
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.4, delay: 0.8 + index * 0.1 }}
+                      onClick={() => selectPrompt(prompt)}
+                      className="px-4 py-2 rounded-full bg-gray-800/50 border border-gray-700/50 text-gray-300 hover:bg-gray-700/50 hover:text-white transition-all duration-200 text-sm"
+                    >
+                      {prompt}
+                    </motion.button>
+                  ))}
+                </div>
+              </motion.div>
+            </div>
+          ) : (
+            /* Chat Messages */
+            <div className="flex-1 overflow-y-auto p-6 space-y-6">
+              {messages.map((message) => (
                 <motion.div
-                    key={dot}
-                    className="w-1.5 h-1.5 bg-white/90 rounded-full mx-0.5"
-                    initial={{ opacity: 0.3 }}
-                    animate={{ 
-                        opacity: [0.3, 0.9, 0.3],
-                        scale: [0.85, 1.1, 0.85]
-                    }}
-                    transition={{
-                        duration: 1.2,
-                        repeat: Infinity,
-                        delay: dot * 0.15,
-                        ease: "easeInOut",
-                    }}
-                    style={{
-                        boxShadow: "0 0 4px rgba(255, 255, 255, 0.3)"
-                    }}
-                />
-            ))}
+                  key={message.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className={`flex gap-4 ${message.role === "user" ? "justify-end" : "justify-start"}`}
+                >
+                  {message.role === "assistant" && (
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center flex-shrink-0">
+                      <Bot className="w-4 h-4 text-white" />
+                    </div>
+                  )}
+
+                  <div
+                    className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                      message.role === "user"
+                        ? "bg-gray-800 text-white"
+                        : "bg-gray-900/50 text-gray-100 border border-gray-800/50"
+                    }`}
+                  >
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        p: ({ children }) => <p className="mb-2 last:mb-0">{children}</p>,
+                        h1: ({ children }) => <h1 className="text-xl font-bold mb-2">{children}</h1>,
+                        h2: ({ children }) => <h2 className="text-lg font-semibold mb-2">{children}</h2>,
+                        h3: ({ children }) => <h3 className="text-base font-medium mb-2">{children}</h3>,
+                        ul: ({ children }) => <ul className="list-disc list-inside mb-2">{children}</ul>,
+                        ol: ({ children }) => <ol className="list-decimal list-inside mb-2">{children}</ol>,
+                        li: ({ children }) => <li className="mb-1">{children}</li>,
+                        code: ({ children, className }) => {
+                          const isInline = !className
+                          return isInline ? (
+                            <code className="bg-gray-800 px-1 py-0.5 rounded text-sm font-mono">{children}</code>
+                          ) : (
+                            <code className="block bg-gray-800 p-3 rounded-lg text-sm font-mono overflow-x-auto">
+                              {children}
+                            </code>
+                          )
+                        },
+                        pre: ({ children }) => (
+                          <pre className="bg-gray-800 p-3 rounded-lg overflow-x-auto mb-2">{children}</pre>
+                        ),
+                        blockquote: ({ children }) => (
+                          <blockquote className="border-l-4 border-gray-600 pl-4 italic mb-2">{children}</blockquote>
+                        ),
+                        a: ({ children, href }) => (
+                          <a
+                            href={href}
+                            className="text-blue-400 hover:text-blue-300 underline"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            {children}
+                          </a>
+                        ),
+                      }}
+                    >
+                      {message.content}
+                    </ReactMarkdown>
+                  </div>
+
+                  {message.role === "user" && (
+                    <div className="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center flex-shrink-0">
+                      <User className="w-4 h-4 text-white" />
+                    </div>
+                  )}
+                </motion.div>
+              ))}
+
+              {isLoading && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex gap-4 justify-start">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+                    <Bot className="w-4 h-4 text-white" />
+                  </div>
+                  <div className="bg-gray-900/50 border border-gray-800/50 rounded-2xl px-4 py-3">
+                    <div className="flex items-center gap-1">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100" />
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200" />
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              <div ref={messagesEndRef} />
+            </div>
+          )}
+
+          {/* Input Area */}
+          <div className="p-6 border-t border-gray-800/50">
+            <div className="max-w-4xl mx-auto">
+              {/* Attachments Preview */}
+              <AnimatePresence>
+                {attachments.length > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mb-4 flex gap-2 flex-wrap"
+                  >
+                    {attachments.map((file, index) => (
+                      <div key={index} className="flex items-center gap-2 bg-gray-800/50 rounded-lg px-3 py-2 text-sm">
+                        <span className="text-gray-300">{file.name}</span>
+                        <button onClick={() => removeAttachment(index)} className="text-gray-400 hover:text-white">
+                          ×
+                        </button>
+                      </div>
+                    ))}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Input Container - Removed saved prompts, voice input, and attach content */}
+              <div className="relative bg-gray-900/50 border border-gray-700/50 rounded-2xl backdrop-blur-sm">
+                <div className="flex items-end gap-3 p-4">
+                  {/* Text Input */}
+                  <div className="flex-1">
+                    <textarea
+                      value={input}
+                      onChange={(e) => setInput(e.target.value)}
+                      onKeyDown={handleKeyDown}
+                      placeholder="Ask me anything..."
+                      className="w-full bg-transparent border-none outline-none resize-none text-white placeholder-gray-500 min-h-[24px] max-h-32"
+                      rows={1}
+                      style={{
+                        height: "auto",
+                        minHeight: "24px",
+                      }}
+                      onInput={(e) => {
+                        const target = e.target as HTMLTextAreaElement
+                        target.style.height = "auto"
+                        target.style.height = target.scrollHeight + "px"
+                      }}
+                    />
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex items-center gap-2">
+                    {/* File Upload */}
+                    <input ref={fileInputRef} type="file" multiple onChange={handleFileUpload} className="hidden" />
+                    <button
+                      onClick={() => fileInputRef.current?.click()}
+                      className="p-2 text-gray-400 hover:text-white transition-colors rounded-lg hover:bg-gray-800/50"
+                    >
+                      <Paperclip className="w-5 h-5" />
+                    </button>
+
+                    {/* Send Button */}
+                    <button
+                      onClick={handleSend}
+                      disabled={!input.trim() || isLoading}
+                      className={`p-2 rounded-lg transition-all ${
+                        input.trim() && !isLoading
+                          ? "bg-gradient-to-r from-violet-500 to-purple-600 text-white hover:from-violet-600 hover:to-purple-700 shadow-lg"
+                          : "bg-gray-800/50 text-gray-500 cursor-not-allowed"
+                      }`}
+                    >
+                      <Send className="w-5 h-5" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  )
 }
