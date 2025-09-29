@@ -182,24 +182,6 @@ export function AnimatedAIChat() {
       </div>
 
       <div className="relative z-10 flex flex-col h-screen max-w-6xl mx-auto">
-        {/* Header */}
-        <header className="flex items-center justify-between p-6 border-b border-gray-800/50">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
-              <Bot className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-xl font-semibold">Askk AI</h1>
-              <p className="text-sm text-gray-400">Advanced AI Assistant</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="px-3 py-1 rounded-full bg-green-500/20 border border-green-500/30">
-              <span className="text-xs font-medium text-green-400">Online</span>
-            </div>
-          </div>
-        </header>
-
         {/* Main Content */}
         <div className="flex-1 flex flex-col overflow-hidden">
           {messages.length === 0 ? (
@@ -212,7 +194,7 @@ export function AnimatedAIChat() {
                 className="max-w-4xl w-full"
               >
                 <h1 className="text-4xl md:text-5xl font-light mb-4">
-                  Welcome to <span className="font-semibold">Askk AI.</span>
+                  Welcome to <span className="font-semibold">AI Assistant</span>
                 </h1>
                 <p className="text-gray-400 text-lg mb-12">
                   Uses multiple sources and tools to answer questions with citations
