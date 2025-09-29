@@ -2,25 +2,25 @@ import Link from 'next/link';
 import { ArrowUpRight } from 'lucide-react';
 
 const socialLinks = [
-  { name: 'LinkedIn', href: 'https://www.linkedin.com/company/lugano-living-lab/' },
-  { name: 'Facebook', href: 'https://www.facebook.com/luganolivinglab' },
-  { name: 'X', href: 'https://twitter.com/luganoL_Lab' },
-  { name: 'YouTube', href: 'https://www.youtube.com/channel/UCzaV1hWCe8f2T4y9aIMg62A' },
-  { name: 'Instagram', href: 'https://www.instagram.com/luganolivinglab/' },
+  { name: 'LinkedIn', href: 'https://www.linkedin.com/company/hexon-elearning/' },
+  { name: 'Facebook', href: 'https://www.facebook.com/hexonelearning' },
+  { name: 'X', href: 'https://twitter.com/hexon_learning' },
+  { name: 'YouTube', href: 'https://www.youtube.com/channel/hexonelearning' },
+  { name: 'Instagram', href: 'https://www.instagram.com/hexonelearning/' },
 ];
 
 const navLinks1 = [
-  { name: 'Progetti', href: '/progetti' },
-  { name: 'Eventi', href: '/eventi' },
-  { name: 'Ricerca', href: '/ricerca' },
-  { name: 'Contatto', href: 'mailto:info@luganolivinglab.ch' },
+  { name: 'Courses', href: '/courses' },
+  { name: 'Learning Events', href: '/eventi' },
+  { name: 'Research', href: '/ricerca' },
+  { name: 'Support', href: 'mailto:support@hexon.edu' },
 ];
 
 const navLinks2 = [
-  { name: 'Network', href: '/network' },
-  { name: 'Privacy policies', href: '#' },
-  { name: 'Impressum', href: '#' },
-  { name: 'Lavora con noi', href: '#' },
+  { name: 'Learning Network', href: '/network' },
+  { name: 'Privacy Policy', href: '#' },
+  { name: 'Terms of Service', href: '#' },
+  { name: 'Careers', href: '#' },
 ];
 
 const AnimatedBlob = () => (
@@ -58,12 +58,12 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-y-12 gap-x-8">
           
           <div className="md:col-span-4">
-            <p className="font-normal text-base mb-4 text-primary-text">Città di Lugano</p>
+            <p className="font-normal text-base mb-4 text-primary-text">HEXON E-Learning</p>
             <div className="text-secondary-text text-sm space-y-1">
-              <p>Comunicazione e innovazione digitale</p>
-              <p>Lugano Living Lab</p>
-              <p>Piazza della Riforma 1</p>
-              <p>CH-6900 Locarno</p>
+              <p>Next-Generation Learning Platform</p>
+              <p>AI-Powered Education Solutions</p>
+              <p>Personalized Learning Experience</p>
+              <p>Learn Anywhere, Anytime</p>
             </div>
           </div>
           
@@ -119,37 +119,37 @@ const Footer = () => {
         <div className="lg:w-5/12 bg-secondary relative px-6 sm:px-12 py-20 flex items-center">
           <div>
             <h2 className="font-light text-5xl sm:text-6xl tracking-tight" style={{ lineHeight: '1.1' }}>
-              L*3 Lugano <br /> Living Lab
+              HEXON <br /> E-Learning
             </h2>
           </div>
           <p className="absolute bottom-6 left-6 sm:left-12 text-xs text-secondary-text">
-            2025 © L*3 Lugano Living Lab
+            2025 © HEXON E-Learning Platform
           </p>
         </div>
         <div className="lg:w-7/12 bg-accent-yellow text-black px-6 sm:px-12 py-12 flex items-center">
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-x-8 gap-y-12 w-full">
                 <div className="flex flex-col">
-                    <p className="text-xs mb-4">Promosso da:</p>
+                    <p className="text-xs mb-4">Powered by:</p>
                     <div className="flex items-start gap-3">
-                        <img src="/lugano-logo.svg" alt="Città di Lugano Logo" className="h-12 w-12"/>
-                        <p className="font-medium text-sm leading-snug pt-1">Città<br/>di Lugano</p>
+                        <img src="/lugano-logo.svg" alt="HEXON Logo" className="h-12 w-12"/>
+                        <p className="font-medium text-sm leading-snug pt-1">HEXON<br/>AI Engine</p>
                     </div>
                 </div>
                 <div className="flex flex-col">
-                    <p className="text-xs mb-4">In partenariato con:</p>
+                    <p className="text-xs mb-4">Technology Partner:</p>
                     <div className="flex items-start gap-3">
-                         <img src="/usi-logo.svg" alt="USI Logo" className="h-12 w-12"/>
+                         <img src="/usi-logo.svg" alt="Learning Analytics Logo" className="h-12 w-12"/>
                          <p className="font-medium text-sm leading-snug pt-1">
-                            Università<br/>della<br/>Svizzera<br/>italiana
+                            Advanced<br/>Learning<br/>Analytics<br/>Institute
                          </p>
                     </div>
                 </div>
                  <div className="flex flex-col">
-                    <p className="text-xs mb-4">Membro di:</p>
+                    <p className="text-xs mb-4">Member of:</p>
                      <div className="flex items-start gap-3">
-                         <img src="/enoll-logo.svg" alt="EnoLL Logo" className="h-12 w-12"/>
+                         <img src="/enoll-logo.svg" alt="E-Learning Network Logo" className="h-12 w-12"/>
                         <p className="font-medium text-sm leading-snug pt-1">
-                            European<br/>Network of<br/>Living Labs
+                            Global<br/>E-Learning<br/>Network
                         </p>
                     </div>
                 </div>

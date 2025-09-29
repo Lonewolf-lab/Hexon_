@@ -18,7 +18,7 @@ const TeamSection = () => {
       <div className="container mx-auto px-6">
         <div className="flex">
           <div className="w-full">
-            <h2 className="text-4xl font-light">The HEXON Team</h2>
+            <h2 className="text-4xl font-light">Meet the HEXON Innovation Team</h2>
           </div>
         </div>
         <div className="h-px bg-border mt-8 mb-10" />

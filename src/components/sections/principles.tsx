@@ -33,7 +33,7 @@ const PrinciplesSection = () => {
     <section className="bg-background text-foreground py-20 lg:py-24">
       <div className="max-w-[1400px] mx-auto px-6">
         <div className="mb-8">
-          <h2 className="text-3xl lg:text-4xl font-normal">Our Learning Philosophy</h2>
+          <h2 className="text-3xl lg:text-4xl font-normal">HEXON's Revolutionary Learning Approach</h2>
         </div>
         
         <div className="border-t border-border">

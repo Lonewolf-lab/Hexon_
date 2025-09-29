@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Star, ChevronDown, ArrowUpRight, Menu, X } from "lucide-react";
+import { ChevronDown, ArrowUpRight, Menu, X } from "lucide-react";
 import { type ClassValue, clsx } from "clsx";
 import { twMerge } from "tailwind-merge";
 import {
@@ -17,7 +17,7 @@ import {
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 
 function cn(...inputs: ClassValue[]) {
@@ -26,9 +26,9 @@ function cn(...inputs: ClassValue[]) {
 
 const navItems = [
   { category: "About", name: "About Us", href: "/" },
-  { category: "Creating", name: "Projects", href: "/progetti" },
-  { category: "Sharing", name: "Events", href: "/eventi" },
-  { category: "Innovation", name: "Research", href: "/ricerca" },
+  { category: "Academics", name: "Courses", href: "/courses" },
+  { category: "Evaluation", name: "Assignments", href: "/eventi" },
+  { category: "AI", name: "Playground", href: "/ricerca" },
 ];
 
 const NavLink = ({
@@ -83,7 +83,42 @@ const NavLink = ({
 
 export default function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [hexagonRotation, setHexagonRotation] = useState(0);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const handleScroll = (event: WheelEvent) => {
+      // Check if we're at the top or bottom of the page
+      const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+      const scrollHeight = document.documentElement.scrollHeight;
+      const clientHeight = document.documentElement.clientHeight;
+      
+      const isAtTop = scrollTop === 0;
+      const isAtBottom = scrollTop + clientHeight >= scrollHeight - 1; // -1 for floating point precision
+      
+      // Don't rotate if at top or bottom
+      if (isAtTop || isAtBottom) {
+        return;
+      }
+      
+      // Prevent default scroll behavior on the hexagon area
+      const hexagonElement = document.getElementById('hexagon-container');
+      if (hexagonElement && hexagonElement.contains(event.target as Node)) {
+        event.preventDefault();
+      }
+      
+      // Update rotation based on scroll delta (very slow rotation)
+      setHexagonRotation(prev => prev + (event.deltaY * 0.1));
+    };
+
+    // Add scroll event listener
+    window.addEventListener('wheel', handleScroll, { passive: false });
+
+    // Cleanup
+    return () => {
+      window.removeEventListener('wheel', handleScroll);
+    };
+  }, []);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 h-[85px] bg-[rgba(0,0,0,0.28)] backdrop-blur-sm text-primary-text font-body">
@@ -93,8 +128,67 @@ export default function Header() {
             href="/"
             className="flex h-full items-center text-white no-underline"
           >
-            <div className="flex h-[85px] w-[85px] items-center justify-center bg-accent-purple">
-              <Star className="h-10 w-10 text-white fill-white" />
+            <div className="flex h-[85px] w-[85px] items-center justify-center bg-accent-purple relative" id="hexagon-container">
+              <div className="relative w-16 h-16">
+                <svg
+                  className="absolute inset-0 w-full h-full transition-transform duration-700 ease-in-out"
+                  viewBox="0 0 100 100"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                  style={{ transform: `rotate(${hexagonRotation}deg)` }}
+                >
+                  <g transform="translate(50 50)">
+                    <path
+                      d="M 35,17.5 A 17.5,17.5 0 0 1 35,-17.5"
+                      fill="none"
+                      stroke="white"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                      transform="rotate(0)"
+                    />
+                    <path
+                      d="M 35,17.5 A 17.5,17.5 0 0 1 35,-17.5"
+                      fill="none"
+                      stroke="white"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                      transform="rotate(60)"
+                    />
+                    <path
+                      d="M 35,17.5 A 17.5,17.5 0 0 1 35,-17.5"
+                      fill="none"
+                      stroke="white"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                      transform="rotate(120)"
+                    />
+                    <path
+                      d="M 35,17.5 A 17.5,17.5 0 0 1 35,-17.5"
+                      fill="none"
+                      stroke="white"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                      transform="rotate(180)"
+                    />
+                    <path
+                      d="M 35,17.5 A 17.5,17.5 0 0 1 35,-17.5"
+                      fill="none"
+                      stroke="white"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                      transform="rotate(240)"
+                    />
+                    <path
+                      d="M 35,17.5 A 17.5,17.5 0 0 1 35,-17.5"
+                      fill="none"
+                      stroke="white"
+                      strokeWidth="4"
+                      strokeLinecap="round"
+                      transform="rotate(300)"
+                    />
+                  </g>
+                </svg>
+              </div>
             </div>
             <span className="ml-4 hidden text-lg leading-tight sm:block">
               HEXON
@@ -135,7 +229,7 @@ export default function Header() {
             </DropdownMenu>
 
             <a
-              href="mailto:info@luganolivinglab.ch"
+              href="mailto:support@hexon.edu"
               className="group relative flex items-center justify-center gap-x-2 overflow-hidden bg-secondary px-4 py-2 text-sm text-white no-underline transition-colors hover:bg-opacity-80"
             >
               <span>Contatto</span>
@@ -177,13 +271,13 @@ export default function Header() {
                 <div className="mt-auto text-sm text-secondary-text space-y-4">
                   <div>
                     Città di Lugano<br />
-                    Comunicazione e innovazione digitale<br />
-                    Lugano Living Lab<br />
-                    Piazza della Riforma 1<br />
-                    CH-6900 Locarno
+                    Next-Generation Learning Platform<br />
+                    HEXON E-Learning<br />
+                    Digital Education Hub<br />
+                    Global Online Campus
                   </div>
                    <a
-                    href="mailto:info@luganolivinglab.ch"
+                    href="mailto:support@hexon.edu"
                     className="flex w-full items-center justify-center gap-x-2 bg-secondary px-4 py-3 text-base text-white no-underline"
                   >
                     <span>Contatto</span>

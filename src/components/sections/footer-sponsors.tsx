@@ -35,7 +35,7 @@ const FooterSponsors = () => {
             Living Lab
           </h2>
           <p className="text-[#CCCCCC] text-xs self-start lg:self-end mt-16 lg:mt-0">
-            2025 © L*3 Lugano Living Lab
+            2025 © HEXON E-Learning Platform
           </p>
         </div>
         <div className="bg-[#faff00] p-12 sm:p-16 text-black flex items-center">

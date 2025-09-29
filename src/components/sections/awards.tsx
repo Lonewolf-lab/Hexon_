@@ -29,7 +29,7 @@ const AwardsSection = () => {
     <section className="bg-background text-foreground py-20">
       <div className="container mx-auto px-6">
         <div className="flex justify-between items-end mb-12">
-          <h2 className="text-4xl font-light">Awards & Recognition</h2>
+          <h2 className="text-4xl font-light">HEXON's Excellence in EdTech Innovation</h2>
           <p className="text-muted-foreground text-sm">Our commitment to educational excellence</p>
         </div>
         

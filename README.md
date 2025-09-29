@@ -75,7 +75,7 @@ hexon/
 ├── src/
 │   ├── app/                    # Next.js 14 App Router
 │   │   ├── eventi/            # Events page
-│   │   ├── progetti/          # Projects page
+│   │   ├── courses/          # Courses page
 │   │   ├── ricerca/           # Research page
 │   │   ├── layout.tsx         # Root layout
 │   │   └── page.tsx           # Home page
